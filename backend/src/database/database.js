@@ -7,10 +7,9 @@ const db = new sqlite3.Database(dbPath);
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS blocked_apps (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      app_path TEXT PRIMARY KEY,
       platform TEXT NOT NULL CHECK(platform IN ('android', 'linux', 'windows')),
       app_name TEXT NOT NULL,
-      app_path TEXT NOT NULL,
       is_blocked BOOLEAN NOT NULL,
       UNIQUE(platform, app_path)
     )
@@ -18,8 +17,7 @@ db.serialize(() => {
 
   db.run(`
     CREATE TABLE IF NOT EXISTS block_time_settings (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      platform TEXT NOT NULL CHECK(platform IN ('android', 'linux', 'windows')),
+      platform TEXT PRIMARY KEY CHECK(platform IN ('android', 'linux', 'windows')),
       start_hour INTEGER NOT NULL,
       start_minute INTEGER NOT NULL,
       end_hour INTEGER NOT NULL,
