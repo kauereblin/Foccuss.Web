@@ -4,24 +4,60 @@ const dbPath = path.resolve(__dirname, 'foccuss.db');
 
 const db = new sqlite3.Database(dbPath);
 
+db.runAsync = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({ lastID: this.lastID, changes: this.changes });
+      }
+    });
+  });
+};
+
+db.getAsync = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+};
+
+db.allAsync = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS blocked_apps (
-      app_path TEXT PRIMARY KEY,
+      appPath TEXT PRIMARY KEY,
       platform TEXT NOT NULL CHECK(platform IN ('android', 'linux', 'windows')),
-      app_name TEXT NOT NULL,
-      is_blocked BOOLEAN NOT NULL,
-      UNIQUE(platform, app_path)
+      appName TEXT NOT NULL,
+      isBlocked BOOLEAN NOT NULL,
+      UNIQUE(platform, appPath)
     )
   `);
 
   db.run(`
     CREATE TABLE IF NOT EXISTS block_time_settings (
       platform TEXT PRIMARY KEY CHECK(platform IN ('android', 'linux', 'windows')),
-      start_hour INTEGER NOT NULL,
-      start_minute INTEGER NOT NULL,
-      end_hour INTEGER NOT NULL,
-      end_minute INTEGER NOT NULL,
+      startHour INTEGER NOT NULL,
+      startMinute INTEGER NOT NULL,
+      endHour INTEGER NOT NULL,
+      endMinute INTEGER NOT NULL,
       monday BOOLEAN,
       tuesday BOOLEAN,
       wednesday BOOLEAN,
@@ -29,7 +65,7 @@ db.serialize(() => {
       friday BOOLEAN,
       saturday BOOLEAN,
       sunday BOOLEAN,
-      is_active BOOLEAN NOT NULL
+      isActive BOOLEAN NOT NULL
     )
   `);
 
@@ -42,9 +78,9 @@ db.serialize(() => {
     if (row.count === 0) {
       db.run(`
         INSERT INTO block_time_settings (
-          platform, start_hour, start_minute, end_hour, end_minute, 
+          platform, startHour, startMinute, endHour, endMinute, 
           monday, tuesday, wednesday, thursday, friday, 
-          saturday, sunday, is_active)
+          saturday, sunday, isActive)
           VALUES
           ('android', 0, 0, 0, 0, 
           1, 1, 1, 1, 1, 
