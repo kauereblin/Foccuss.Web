@@ -8,6 +8,15 @@ exports.getAllAndroid = async (req, res) => {
   try {
     const blockedApps = await db.allAsync(`SELECT * FROM blocked_apps WHERE platform = 'android'`);
     const settings = await db.allAsync(`SELECT * FROM block_time_settings WHERE platform = 'android'`);
+    settings[0].monday    = settings[0].monday    == 1;
+    settings[0].tuesday   = settings[0].tuesday   == 1;
+    settings[0].wednesday = settings[0].wednesday == 1;
+    settings[0].thursday  = settings[0].thursday  == 1;
+    settings[0].friday    = settings[0].friday    == 1;
+    settings[0].saturday  = settings[0].saturday  == 1;
+    settings[0].sunday    = settings[0].sunday    == 1;
+    settings[0].isActive  = settings[0].isActive  == 1;
+    
     return res.status(200).json({ blockTimeSettings: settings[0], blockedApps: blockedApps});
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
@@ -79,7 +88,15 @@ exports.saveAndroidTimeSettings = async (req, res) => {
 exports.getAndroidTimeSettings = async (req, res) => {
   try {
     const settings = await db.allAsync(`SELECT * FROM block_time_settings WHERE platform = 'android'`);
-    return res.status(200).json(settings);
+    settings[0].monday    = settings[0].monday    == 1;
+    settings[0].tuesday   = settings[0].tuesday   == 1;
+    settings[0].wednesday = settings[0].wednesday == 1;
+    settings[0].thursday  = settings[0].thursday  == 1;
+    settings[0].friday    = settings[0].friday    == 1;
+    settings[0].saturday  = settings[0].saturday  == 1;
+    settings[0].sunday    = settings[0].sunday    == 1;
+    settings[0].isActive  = settings[0].isActive  == 1;
+    return res.status(200).json(settings[0]);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
