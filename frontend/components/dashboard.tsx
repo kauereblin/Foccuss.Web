@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -20,39 +20,61 @@ interface DashboardProps {
 export default function Dashboard({ onLogout }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("android")
   const { toast } = useToast()
+  const hasFetched = useRef(false)
   
-  const { data: androidData, error: androidError, isLoading: androidIsLoading } = useSWR<PlatformData>("/android", getFetcher, {
-    onError() {
-      toast({
-        title: "Erro",
-        description: "Falha ao carregar os dados do android",
-        variant: "destructive",
-      })
-      console.error("SWR error:", androidError);
-    },
-  })
+  const { data: androidData, error: androidError, isLoading: androidIsLoading, mutate: mutateAndroid } = useSWR<PlatformData>(
+    hasFetched.current ? "/android" : null,
+    getFetcher,
+    {
+      onError() {
+        toast({
+          title: "Erro",
+          description: "Falha ao carregar os dados do android",
+          variant: "destructive",
+        })
+        console.error("SWR error:", androidError);
+      },
+    }
+  )
 
-  const { data: linuxData, error: linuxError, isLoading: linuxIsLoading } = useSWR<PlatformData>("/linux", getFetcher, {
-    onError() {
-      toast({
-        title: "Erro",
-        description: "Falha ao carregar os dados do linux",
-        variant: "destructive",
-      })
-      console.error("SWR error:", linuxError);
-    },
-  })
+  const { data: linuxData, error: linuxError, isLoading: linuxIsLoading, mutate: mutateLinux } = useSWR<PlatformData>(
+    hasFetched.current ? "/linux" : null,
+    getFetcher,
+    {
+      onError() {
+        toast({
+          title: "Erro",
+          description: "Falha ao carregar os dados do linux",
+          variant: "destructive",
+        })
+        console.error("SWR error:", linuxError);
+      },
+    }
+  )
   
-  const { data: windowsData, error: windowsError, isLoading: windowsIsLoading } = useSWR<PlatformData>("/windows", getFetcher, {
-    onError() {
-      toast({
-        title: "Erro",
-        description: "Falha ao carregar os dados do windows",
-        variant: "destructive",
-      })
-      console.error("SWR error:", windowsError);
-    },
-  })
+  const { data: windowsData, error: windowsError, isLoading: windowsIsLoading, mutate: mutateWindows } = useSWR<PlatformData>(
+    hasFetched.current ? "/windows" : null,
+    getFetcher,
+    {
+      onError() {
+        toast({
+          title: "Erro",
+          description: "Falha ao carregar os dados do windows",
+          variant: "destructive",
+        })
+        console.error("SWR error:", windowsError);
+      },
+    }
+  )
+
+  useEffect(() => {
+    if (!hasFetched.current) {
+      hasFetched.current = true
+      mutateAndroid()
+      mutateLinux()
+      mutateWindows()
+    }
+  }, [mutateAndroid, mutateLinux, mutateWindows])
 
   return (
     <div className="min-h-screen p-4 relative overflow-hidden">

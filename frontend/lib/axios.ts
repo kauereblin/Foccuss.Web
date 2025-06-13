@@ -7,7 +7,6 @@ const api = axios.create({
 export default api;
 
 export async function getFetcher(url: string) {
-	console.log("Fetching URL:", url);
 	const res = await api.get(url);
   return res.data;
 }
@@ -16,7 +15,6 @@ export async function postFetcher<TRequest, TResponse>(
 	url: string,
 	{ arg }: { arg: TRequest },
 ) {
-	console.log("Posting to URL:", url, "with arg:", arg);
 	const res = await api.post<TResponse>(url, arg);
   return res.data;
 }
@@ -25,7 +23,6 @@ export async function patchFetcher<TRequest, TResponse>(
 	url: string,
 	{ arg }: { arg: TRequest },
 ) {
-	console.log("Posting to URL:", url, "with arg:", arg);
 	const res = await api.patch<TResponse>(url, arg);
   return res.data;
 }
