@@ -34,9 +34,6 @@ exports.getAndroidBlockedApps = async (req, res) => {
 
 exports.saveAndroidBlockedApps = async (req, res) => {
   const blockedAppDtos = req.body;
-  if (blockedAppDtos.length === 0) {
-    return res.status(400).json({ success: false, message: "Bad Request" });
-  }
   
   try {
     for (let idxApp = 0; idxApp < blockedAppDtos.length; idxApp++) {
@@ -133,9 +130,6 @@ exports.getWindowsBlockedApps = async (req, res) => {
 
 exports.saveWindowsBlockedApps = async (req, res) => {
   const blockedAppDtos = req.body;
-  if (blockedAppDtos.length === 0) {
-    return res.status(400).json({ success: false, message: "Bad Request" });
-  }
   
   try {
     for (let idxApp = 0; idxApp < blockedAppDtos.length; idxApp++) {
@@ -232,10 +226,7 @@ exports.getLinuxBlockedApps = async (req, res) => {
 
 exports.saveLinuxBlockedApps = async (req, res) => {
   const blockedAppDtos = req.body;
-  if (blockedAppDtos.length === 0) {
-    return res.status(400).json({ success: false, message: "Bad Request" });
-  }
-  
+
   try {
     for (let idxApp = 0; idxApp < blockedAppDtos.length; idxApp++) {
       const app = blockedAppDtos[idxApp];
