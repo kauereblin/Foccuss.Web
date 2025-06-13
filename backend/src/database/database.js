@@ -82,15 +82,15 @@ db.serialize(() => {
           monday, tuesday, wednesday, thursday, friday, 
           saturday, sunday, isActive)
           VALUES
-          ('android', 0, 0, 0, 0, 
+          ('android', 8, 0, 17, 0, 
           1, 1, 1, 1, 1, 
           0, 0, 1),
-          ('linux', 0, 0, 0, 0, 
-          1, 1, 1, 1, 1, 
-          0, 0, 1),
-          ('windows', 0, 0, 0, 0, 
-          1, 1, 1, 1, 1, 
-          0, 0, 1)
+          ('linux', 8, 0, 17, 0, 
+          0, 1, 1, 1, 0, 
+          0, 0, 0),
+          ('windows', 9, 30, 20, 55, 
+          0, 0, 0, 0, 0, 
+          1, 1, 1)
       `, (err) => {
         if (err) {
           console.error("Error inserting default settings:", err);
