@@ -7,6 +7,12 @@ exports.hello = (req, res) => {
 exports.getAllAndroid = async (req, res) => {
   try {
     const blockedApps = await db.allAsync(`SELECT * FROM blocked_apps WHERE platform = 'android'`);
+    for (let idxApp = 0; idxApp < blockedApps.length; idxApp++) {
+      const app = blockedApps[idxApp];
+      app.packageName = app.appPath;
+      delete app.appPath;
+    }
+
     const settings = await db.allAsync(`SELECT * FROM block_time_settings WHERE platform = 'android'`);
     settings[0].monday    = settings[0].monday    == 1;
     settings[0].tuesday   = settings[0].tuesday   == 1;
@@ -26,6 +32,12 @@ exports.getAllAndroid = async (req, res) => {
 exports.getAndroidBlockedApps = async (req, res) => {
   try {
     const blockedApps = await db.allAsync(`SELECT * FROM blocked_apps WHERE platform = 'android'`);
+    for (let idxApp = 0; idxApp < blockedApps.length; idxApp++) {
+      const app = blockedApps[idxApp];
+      app.packageName = app.appPath;
+      delete app.appPath;
+    }
+
     return res.status(200).json(blockedApps);
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
@@ -50,11 +62,11 @@ exports.saveAndroidBlockedApps = async (req, res) => {
 };
 
 exports.toggleAndroidApp = async (req, res) => {
-  const { appPath } = req.body;
+  const { packageName } = req.body;
   try {
     const result = await db.runAsync(
       `UPDATE blocked_apps SET isBlocked = NOT isBlocked WHERE platform = 'android' AND appPath = ?`, 
-      [appPath]
+      [packageName]
     );
     return res.status(200).json(result);
   } catch (err) {
