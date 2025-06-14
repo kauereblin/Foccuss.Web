@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Clock, Calendar, AppWindowIcon } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import { AppType, Platform, PlatformData, Schedule } from "@/types/platform"
+import { Platform, PlatformData, Schedule, AndroidPlatformData, AndroidAppType, AppType } from "@/types/platform"
 import { mutate } from "swr"
 import {
   saveAndroidBlockedApps,
@@ -23,7 +23,7 @@ import {
 
 interface PlatformConfigProps {
   platform: Platform
-  data: PlatformData
+  data: PlatformData | AndroidPlatformData
 }
 
 const colorClasses = {
@@ -79,7 +79,7 @@ function getHoverTextClass(platform: Platform) {
 }
 
 export default function PlatformConfig({ platform, data }: PlatformConfigProps) {
-  const [apps, setApps] = useState(data.blockedApps)
+  const [apps, setApps] = useState<AppType[] | AndroidAppType[]>(data.blockedApps)
   const [schedule, setSchedule] = useState(data.blockTimeSettings)
   const [searchTerm, setSearchTerm] = useState("")
   const [isSaving, setIsSaving] = useState(false)
@@ -97,8 +97,24 @@ export default function PlatformConfig({ platform, data }: PlatformConfigProps) 
     sun: 'sunday'
   }
 
-  const toggleAppBlocked = (appPath: string) => {
-    setApps(apps.map((app) => (app.appPath === appPath ? { ...app, isBlocked: !app.isBlocked } : app)))
+  const toggleAppBlocked = (identifier: string) => {
+    if (platform === 'android') {
+      setApps((currentApps) => 
+        (currentApps as AndroidAppType[]).map((app) => 
+          app.packageName === identifier 
+            ? { ...app, isBlocked: !app.isBlocked } 
+            : app
+        )
+      )
+    } else {
+      setApps((currentApps) => 
+        (currentApps as AppType[]).map((app) => 
+          app.appPath === identifier 
+            ? { ...app, isBlocked: !app.isBlocked } 
+            : app
+        )
+      )
+    }
   }
 
   const toggleScheduleDay = (day: string) => {
@@ -121,17 +137,17 @@ export default function PlatformConfig({ platform, data }: PlatformConfigProps) 
         case "android":
           {
             const androidApps = apps.map((app) => ({
-              packageName: app.appPath,
+              packageName: (app as AndroidAppType).packageName,
               appName: app.appName,
               isBlocked: app.isBlocked,
             }))
             await saveAndroidBlockedApps(androidApps)
           } break
         case "windows":
-          await saveWindowsBlockedApps(apps)
+          await saveWindowsBlockedApps(apps as AppType[])
           break
         case "linux":
-          await saveLinuxBlockedApps(apps)
+          await saveLinuxBlockedApps(apps as AppType[])
           break
       }
 
@@ -216,7 +232,14 @@ export default function PlatformConfig({ platform, data }: PlatformConfigProps) 
                       Bloqueado
                     </Badge>
                   )}
-                  <Switch checked={app.isBlocked} onCheckedChange={() => toggleAppBlocked(app.appPath)} />
+                  <Switch 
+                    checked={app.isBlocked} 
+                    onCheckedChange={() => toggleAppBlocked(
+                      platform === 'android' 
+                        ? (app as AndroidAppType).packageName 
+                        : (app as AppType).appPath
+                    )} 
+                  />
                 </div>
               </div>
             ))}

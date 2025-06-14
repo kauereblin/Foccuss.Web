@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/components/ui/use-toast"
 import useSWR from "swr"
 import { getFetcher } from "@/lib/axios"
-import { PlatformData } from "@/types/platform"
+import { PlatformData, AndroidPlatformData } from "@/types/platform"
 import PlatformSkeleton from "@/components/platform-skeleton"
 
 interface DashboardProps {
@@ -21,7 +21,7 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("android")
   const { toast } = useToast()
   
-  const { data: androidData, error: androidError, isLoading: androidIsLoading, mutate: mutateAndroid } = useSWR<PlatformData>(
+  const { data: androidData, error: androidError, isLoading: androidIsLoading, mutate: mutateAndroid } = useSWR<AndroidPlatformData>(
     "/android",
     getFetcher,
     {

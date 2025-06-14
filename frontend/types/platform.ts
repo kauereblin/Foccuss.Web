@@ -1,6 +1,6 @@
 export interface AppType {
-  appName: string
   appPath: string
+  appName: string
   isBlocked: boolean
 }
 
@@ -31,4 +31,9 @@ export interface AndroidAppType {
   packageName: string
   appName: string
   isBlocked: boolean
+}
+
+export interface AndroidPlatformData {
+  blockedApps: AndroidAppType[]
+  blockTimeSettings: Schedule
 }

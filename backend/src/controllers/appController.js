@@ -10,6 +10,7 @@ exports.getAllAndroid = async (req, res) => {
     for (let idxApp = 0; idxApp < blockedApps.length; idxApp++) {
       const app = blockedApps[idxApp];
       app.packageName = app.appPath;
+      app.isBlocked = app.isBlocked == 1;
       delete app.appPath;
     }
 
@@ -35,6 +36,7 @@ exports.getAndroidBlockedApps = async (req, res) => {
     for (let idxApp = 0; idxApp < blockedApps.length; idxApp++) {
       const app = blockedApps[idxApp];
       app.packageName = app.appPath;
+      app.isBlocked = app.isBlocked == 1;
       delete app.appPath;
     }
 
