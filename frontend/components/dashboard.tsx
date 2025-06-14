@@ -20,12 +20,13 @@ interface DashboardProps {
 export default function Dashboard({ onLogout }: DashboardProps) {
   const [activeTab, setActiveTab] = useState("android")
   const { toast } = useToast()
-  const hasFetched = useRef(false)
   
   const { data: androidData, error: androidError, isLoading: androidIsLoading, mutate: mutateAndroid } = useSWR<PlatformData>(
-    hasFetched.current ? "/android" : null,
+    "/android",
     getFetcher,
     {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
       onError() {
         toast({
           title: "Erro",
@@ -38,9 +39,11 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   )
 
   const { data: linuxData, error: linuxError, isLoading: linuxIsLoading, mutate: mutateLinux } = useSWR<PlatformData>(
-    hasFetched.current ? "/linux" : null,
+    "/linux",
     getFetcher,
     {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
       onError() {
         toast({
           title: "Erro",
@@ -53,9 +56,11 @@ export default function Dashboard({ onLogout }: DashboardProps) {
   )
   
   const { data: windowsData, error: windowsError, isLoading: windowsIsLoading, mutate: mutateWindows } = useSWR<PlatformData>(
-    hasFetched.current ? "/windows" : null,
+    "/windows",
     getFetcher,
     {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
       onError() {
         toast({
           title: "Erro",
@@ -66,15 +71,6 @@ export default function Dashboard({ onLogout }: DashboardProps) {
       },
     }
   )
-
-  useEffect(() => {
-    if (!hasFetched.current) {
-      hasFetched.current = true
-      mutateAndroid()
-      mutateLinux()
-      mutateWindows()
-    }
-  }, [mutateAndroid, mutateLinux, mutateWindows])
 
   return (
     <div className="min-h-screen p-4 relative overflow-hidden">
