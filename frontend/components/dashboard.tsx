@@ -72,6 +72,13 @@ export default function Dashboard({ onLogout }: DashboardProps) {
     }
   )
 
+  useEffect(() => {
+    mutateAndroid()
+    mutateLinux()
+    mutateWindows()
+  }
+  , [])
+
   return (
     <div className="min-h-screen p-4 relative overflow-hidden">
       {/* Animated background */}
