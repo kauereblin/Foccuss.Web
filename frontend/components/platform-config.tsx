@@ -213,7 +213,11 @@ export default function PlatformConfig({ platform, data }: PlatformConfigProps) 
           <div className="grid gap-3 max-h-96 overflow-y-auto">
             {filteredApps.map((app, idx) => (
               <div
-                key={app.appName + idx}
+                key={
+                  (platform === 'android' 
+                  ? (app as AndroidAppType).packageName 
+                  : (app as AppType).appPath) + idx
+                }
                 className={`flex items-center justify-between p-4 rounded-lg border transition-all duration-200 bg-gray-500/10 border-gray-500/20`}
               >
                 <div className="flex-1">
@@ -222,7 +226,10 @@ export default function PlatformConfig({ platform, data }: PlatformConfigProps) 
                       className={`w-3 h-3 rounded-full ${app.isBlocked ? colors.bulletInactive : colors.bullet}`}
                     ></div>
                     <div>
-                      <h4 className="font-medium text-white">{app.appName}</h4>
+                      <h4 className="font-medium text-white">
+                        {platform === 'android' 
+                        ? (app as AndroidAppType).packageName 
+                        : (app as AppType).appPath}</h4>
                     </div>
                   </div>
                 </div>
